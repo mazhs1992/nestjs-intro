@@ -5,20 +5,21 @@ import {
   Param,
   Query,
   Body,
-  Patch,
-  Put,
-  Delete,
   Headers,
   Ip,
+  ParseIntPipe,
+  DefaultValuePipe,
 } from '@nestjs/common';
 
 @Controller('users')
 export class UsersController {
-  @Get('/:id/:optional?')
-  //   public getUsers(@Param() params: any, @Query() query: any) {
-  public getUsers(@Param('id') id: any, @Query('limit') limit: any) {
-    console.log(id);
-    console.log(limit);
+  @Get('/:id?/:optional?')
+  public getUsers(
+    @Param('id', ParseIntPipe) id: number | undefined,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+  ) {
+    console.log(id, limit, page);
     return `You send a get resuest to /users `;
   }
 
