@@ -7,6 +7,6 @@ export class AuthController {
 
   @Get()
   getHello(): string {
-    return this.authService.validateUser();
+    return this.authService.login('1', '2', '3');
   }
 }
