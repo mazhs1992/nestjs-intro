@@ -17,7 +17,12 @@ export class PostsService {
     private readonly usersService: UsersService,
   ) {}
   public async findAll() {
-    return await this.postRepository.find();
+    return await this.postRepository.find({
+      // or add the eager flag on post entity
+      relations: {
+        metaOptions: true,
+      },
+    });
   }
 
   public async create(createPostDto: CreatePostDto) {
