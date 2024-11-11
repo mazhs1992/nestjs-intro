@@ -1,7 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { postType } from './enums/postType.enum';
 import { postStatus } from './enums/postStatus.enum';
-import { CreatePostMetaOptionsDto } from '../meta-options/dtos/create-post-meta-options.dto';
+import { MetaOption } from 'src/meta-options/meta-option.entity';
 
 @Entity()
 export class Post {
@@ -56,13 +62,13 @@ export class Post {
     length: 1024,
     nullable: true,
   })
-  featuredImageUrl: string;
+  featuredImageUrl?: string;
 
   @Column({
     type: 'timestamp',
     nullable: true,
   })
-  publishOn: Date;
+  publishOn?: Date;
 
   @Column({
     type: 'varchar',
@@ -71,10 +77,7 @@ export class Post {
   })
   tags: string[];
 
-  @Column({
-    type: 'varchar',
-    length: 96,
-    nullable: true,
-  })
-  metaOptions: CreatePostMetaOptionsDto;
+  @OneToOne(() => MetaOption)
+  @JoinColumn()
+  metaOptions?: MetaOption;
 }
