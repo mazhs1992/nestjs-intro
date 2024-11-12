@@ -40,6 +40,11 @@ export class PostsService {
       return 'Post not found';
     }
 
+    // const invertPost = await this.metaOptionsRepository.find({
+    //   where: { id: post.metaOptions.id },
+    //   relations: ['post'],
+    // });
+
     //delete the post
     await this.postRepository.delete(id);
     //delete meta option
