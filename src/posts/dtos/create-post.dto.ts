@@ -52,7 +52,8 @@ export class CreatePostDto {
 
   @IsOptional()
   @IsArray()
-  tags?: string[];
+  @IsInt({ each: true })
+  tags?: number[];
 
   @IsOptional()
   @ValidateNested({ each: true })

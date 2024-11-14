@@ -5,6 +5,7 @@ import { Post } from '../posts.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MetaOption } from 'src/meta-options/meta-option.entity';
+import { TagsService } from 'src/tags/providers/tags.service';
 
 @Injectable()
 export class PostsService {
@@ -15,7 +16,9 @@ export class PostsService {
     @InjectRepository(MetaOption)
     private readonly metaOptionsRepository: Repository<MetaOption>,
     private readonly usersService: UsersService,
+    private readonly tagsService: TagsService,
   ) {}
+
   public async findAll() {
     return await this.postRepository.find({
       // or add the eager flag on post entity
@@ -37,9 +40,11 @@ export class PostsService {
         return 'Author not found';
       }
 
+      const tags = await this.tagsService.findMultibleTags(createPostDto.tags);
       const post = this.postRepository.create({
         ...createPostDto,
         author: author,
+        tags,
       });
 
       return await this.postRepository.save(post);
