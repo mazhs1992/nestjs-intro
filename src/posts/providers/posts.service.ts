@@ -24,6 +24,7 @@ export class PostsService {
       // or add the eager flag on post entity
       relations: {
         metaOptions: true,
+        // tags: true,
         // author: true,
       },
     });
