@@ -22,7 +22,11 @@ export class PostsController {
 
   @Post()
   public createPost(@Body() createPostDto: CreatePostDto) {
-    return this.postService.create(createPostDto);
+    try {
+      return this.postService.create(createPostDto);
+    } catch (error) {
+      return error.message;
+    }
   }
 
   @Delete()
