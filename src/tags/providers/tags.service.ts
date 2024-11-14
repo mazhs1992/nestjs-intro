@@ -34,8 +34,12 @@ export class TagsService {
   }
 
   public async delete(id: number) {
-    console.log('HELLO');
     await this.tagRepository.delete(id);
+    return { deleted: true, id };
+  }
+
+  public async softDelete(id: number) {
+    await this.tagRepository.softDelete(id);
     return { deleted: true, id };
   }
 }
