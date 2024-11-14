@@ -32,4 +32,10 @@ export class TagsService {
       },
     });
   }
+
+  public async delete(id: number) {
+    console.log('HELLO');
+    await this.tagRepository.delete(id);
+    return { deleted: true, id };
+  }
 }
