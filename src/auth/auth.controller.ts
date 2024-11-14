@@ -9,6 +9,6 @@ export class AuthController {
 
   @Get()
   getHello(): string {
-    return this.authService.login('1', '2', '3');
+    return this.authService.login('1', '2', 3);
   }
 }

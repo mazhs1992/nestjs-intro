@@ -28,7 +28,7 @@ export class UsersService {
     return newUser;
   }
 
-  public findAll(
+  public async findAll(
     getUsersParamDto: GetUsersParamDto,
     limit: number,
     page: number,
@@ -39,26 +39,11 @@ export class UsersService {
       return 'Not authenticated';
     }
 
-    return [
-      {
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john@doe.com',
-      },
-      {
-        firstName: 'Alice',
-        lastName: 'Doe',
-        email: 'alice@doe.com',
-      },
-    ];
+    const users = await this.userRepository.find();
+    return users;
   }
 
-  public findOneById(id: string) {
-    return {
-      id: 123,
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'alice@doe.com',
-    };
+  public async findOneById(id: number) {
+    return await this.userRepository.findOneBy({ id });
   }
 }

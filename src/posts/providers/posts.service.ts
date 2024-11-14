@@ -21,15 +21,32 @@ export class PostsService {
       // or add the eager flag on post entity
       relations: {
         metaOptions: true,
+        // author: true,
       },
     });
   }
 
   public async create(createPostDto: CreatePostDto) {
-    const post = this.postRepository.create(createPostDto);
+    try {
+      // find author from authorId
+      const author = await this.usersService.findOneById(
+        createPostDto.authorId,
+      );
 
-    return await this.postRepository.save(post);
-    // add metaOptions to post
+      if (!author) {
+        return 'Author not found';
+      }
+
+      const post = this.postRepository.create({
+        ...createPostDto,
+        author: author,
+      });
+
+      return await this.postRepository.save(post);
+      // add metaOptions to post
+    } catch (error) {
+      return error.message;
+    }
   }
 
   public async delete(id: number) {
