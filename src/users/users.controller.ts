@@ -39,16 +39,18 @@ export class UsersController {
   @ApiResponse({
     status: 200,
   })
-  public getUsers() // @Param() getUsersParamDto: GetUsersParamDto,
-  // @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-  // @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-  {
+  public getUsers() { // @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number, // @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number, // @Param() getUsersParamDto: GetUsersParamDto,
     return this.usersService.findAll();
   }
 
   @Post()
-  public createUsers(@Body() createUserDto: CreateUserDto) {
+  public createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createUser(createUserDto);
+  }
+
+  @Post('create-many')
+  public async createManyUsers(@Body() createUsersDto: CreateUserDto[]) {
+    return await this.usersService.createMany(createUsersDto);
   }
 
   @Patch()
