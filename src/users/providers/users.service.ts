@@ -1,11 +1,12 @@
 import {
   BadRequestException,
   forwardRef,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   RequestTimeoutException,
 } from '@nestjs/common';
-import { GetUsersParamDto } from '../dtos/get-users-param.dto';
 import { AuthService } from 'src/auth/providers/auth.service';
 import { Repository } from 'typeorm';
 import { User } from '../user.entity';
@@ -48,11 +49,32 @@ export class UsersService {
     }
 
     let newUser = this.userRepository.create(createUserDto);
-    newUser = await this.userRepository.save(newUser);
+    try {
+      newUser = await this.userRepository.save(newUser);
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to proccess your request at the moment',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
     return newUser;
   }
 
   public async findAll() {
+    throw new HttpException(
+      {
+        status: HttpStatus.MOVED_PERMANENTLY,
+        message: 'This route has been moved',
+        filename: 'users.service.ts',
+        lineNumber: 88,
+      },
+      HttpStatus.MOVED_PERMANENTLY,
+      {
+        description: 'Occured becasue the API has been moved',
+      },
+    );
     const isAuth = this.authService.isAuth();
 
     const value = process.env.TEST_VALUE;
@@ -70,6 +92,22 @@ export class UsersService {
   }
 
   public async findOneById(id: number) {
-    return await this.userRepository.findOneBy({ id });
+    let user;
+    try {
+      user = await this.userRepository.findOneBy({ id });
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to proccess your request at the moment',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    return user;
   }
 }
