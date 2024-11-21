@@ -10,6 +10,8 @@ import { TagsModule } from './tags/tags.module';
 import { MetaOptionsModule } from './meta-options/meta-options.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
+import enviromentValidation from './config/enviroment.validation';
+
 const NODE_ENV = process.env.NODE_ENV;
 
 @Module({
@@ -18,6 +20,7 @@ const NODE_ENV = process.env.NODE_ENV;
       isGlobal: true,
       envFilePath: !NODE_ENV ? '.env' : `.env.${NODE_ENV}`,
       load: [appConfig, databaseConfig],
+      validationSchema: enviromentValidation,
     }),
     UsersModule,
     PostsModule,
