@@ -39,12 +39,11 @@ export class UsersController {
   @ApiResponse({
     status: 200,
   })
-  public getUsers(
-    @Param() getUsersParamDto: GetUsersParamDto,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-  ) {
-    return this.usersService.findAll(getUsersParamDto, limit, page);
+  public getUsers() // @Param() getUsersParamDto: GetUsersParamDto,
+  // @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  // @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+  {
+    return this.usersService.findAll();
   }
 
   @Post()

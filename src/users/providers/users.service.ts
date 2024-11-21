@@ -5,7 +5,8 @@ import { Repository } from 'typeorm';
 import { User } from '../user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '../dtos/create-user.dto';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService, ConfigType } from '@nestjs/config';
+import profileConfig from '../config/profile.config';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +16,9 @@ export class UsersService {
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
+
+    @Inject(profileConfig.KEY)
+    private readonly profileConfiguration: ConfigType<typeof profileConfig>,
   ) {}
 
   public async createUser(createUserDto: CreateUserDto) {
@@ -30,16 +34,14 @@ export class UsersService {
     return newUser;
   }
 
-  public async findAll(
-    getUsersParamDto: GetUsersParamDto,
-    limit: number,
-    page: number,
-  ) {
+  public async findAll() {
     const isAuth = this.authService.isAuth();
 
     const value = process.env.TEST_VALUE;
     const envValue = this.configService.get<string>('TEST_VALUE');
     console.log('envValue ', envValue, value);
+
+    console.log('profileConfiguration', this.profileConfiguration);
 
     if (!isAuth) {
       return 'Not authenticated';
