@@ -1,4 +1,10 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { GetUsersParamDto } from '../dtos/get-users-param.dto';
 import { AuthService } from 'src/auth/providers/auth.service';
 import { Repository } from 'typeorm';
@@ -22,13 +28,25 @@ export class UsersService {
   ) {}
 
   public async createUser(createUserDto: CreateUserDto) {
-    const existingUser = await this.userRepository.findOne({
-      where: { email: createUserDto.email },
-    });
+    let existingUser;
+
+    try {
+      existingUser = await this.userRepository.findOne({
+        where: { email: createUserDto.email },
+      });
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to proccess your request at the moment',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
 
     if (existingUser) {
-      return 'User already exists';
+      throw new BadRequestException('User with this email already exists');
     }
+
     let newUser = this.userRepository.create(createUserDto);
     newUser = await this.userRepository.save(newUser);
     return newUser;
