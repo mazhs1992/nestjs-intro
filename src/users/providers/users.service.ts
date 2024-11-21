@@ -8,7 +8,7 @@ import {
   RequestTimeoutException,
 } from '@nestjs/common';
 import { AuthService } from 'src/auth/providers/auth.service';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from '../user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '../dtos/create-user.dto';
@@ -26,6 +26,8 @@ export class UsersService {
 
     @Inject(profileConfig.KEY)
     private readonly profileConfiguration: ConfigType<typeof profileConfig>,
+
+    private readonly dataSource: DataSource,
   ) {}
 
   public async createUser(createUserDto: CreateUserDto) {
@@ -109,5 +111,34 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  public async createMany(createUsesrDto: CreateUserDto[]) {
+    const newUsers: User[] = [];
+    // create query runner instance
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    // connect quert runner to datasource
+    await queryRunner.connect();
+
+    // start transaction
+    await queryRunner.startTransaction();
+    try {
+      for (const user of createUsesrDto) {
+        const newUser = queryRunner.manager.create(User, user);
+        const result = await queryRunner.manager.save(newUser);
+        newUsers.push(result);
+      }
+
+      // if successfull, commit transaction
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      // if error, rollback transaction
+      await queryRunner.rollbackTransaction();
+    } finally {
+      // release connection
+      await queryRunner.release();
+    }
+    return newUsers;
   }
 }
