@@ -1,4 +1,10 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  forwardRef,
+  Inject,
+  Injectable,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { AuthService } from 'src/auth/providers/auth.service';
 import { DataSource, Repository } from 'typeorm';
 import { User } from '../user.entity';
@@ -17,14 +23,19 @@ export class UsersCreateManyProvider {
 
   public async createMany(createUsesrDto: CreateUserDto[]) {
     const newUsers = [];
+
     // create query runner instance
     const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      // connect quert runner to datasource
+      await queryRunner.connect();
 
-    // connect quert runner to datasource
-    await queryRunner.connect();
+      // start transaction
+      await queryRunner.startTransaction();
+    } catch (error) {
+      throw new RequestTimeoutException('Error connecting to database');
+    }
 
-    // start transaction
-    await queryRunner.startTransaction();
     try {
       for (const user of createUsesrDto) {
         const newUser = queryRunner.manager.create(User, user);
@@ -36,6 +47,8 @@ export class UsersCreateManyProvider {
     } catch (error) {
       // if error, rollback transaction
       await queryRunner.rollbackTransaction();
+
+      throw new ConflictException('Could not complete the transaction');
       return error.message;
     } finally {
       // release connection
