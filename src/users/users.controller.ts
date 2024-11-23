@@ -1,16 +1,5 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Param,
-  Query,
-  Body,
-  ParseIntPipe,
-  DefaultValuePipe,
-  Patch,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { GetUsersParamDto } from './dtos/get-users-param.dto';
 import { PatchUserDto } from './dtos/patch-user.dto';
 
 import { UsersService } from './providers/users.service';
@@ -39,7 +28,8 @@ export class UsersController {
   @ApiResponse({
     status: 200,
   })
-  public getUsers() { // @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number, // @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number, // @Param() getUsersParamDto: GetUsersParamDto,
+  public getUsers() {
+    // @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number, // @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number, // @Param() getUsersParamDto: GetUsersParamDto,
     return this.usersService.findAll();
   }
 
