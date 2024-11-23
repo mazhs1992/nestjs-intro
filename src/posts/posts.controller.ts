@@ -25,8 +25,6 @@ export class PostsController {
     @Param('userId') userId: string,
     @Query() postQuery: GetPostDto,
   ) {
-    console.log(`userId: ${userId}`);
-    console.log(`postQuery: ${JSON.stringify(postQuery)}`);
     return this.postService.findAll(userId, postQuery);
   }
 
