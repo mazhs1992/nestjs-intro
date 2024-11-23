@@ -27,12 +27,12 @@ export class PostsController {
   ) {
     console.log(`userId: ${userId}`);
     console.log(`postQuery: ${JSON.stringify(postQuery)}`);
-    return this.postService.findAll();
+    return this.postService.findAll(userId, postQuery);
   }
 
   @Get()
   public getAllPosts() {
-    return this.postService.findAll();
+    return this.postService.findAllPosts();
   }
 
   @Post()

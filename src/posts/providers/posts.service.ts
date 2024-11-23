@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 import { MetaOption } from 'src/meta-options/meta-option.entity';
 import { TagsService } from 'src/tags/providers/tags.service';
 import { PatchPostDto } from '../dtos/patch-post.dto';
+import { GetPostDto } from '../dtos/get-post.dto';
+import { PaginationProvider } from 'src/common/pagination/provider/pagination.provider';
 
 @Injectable()
 export class PostsService {
@@ -18,9 +20,24 @@ export class PostsService {
     private readonly metaOptionsRepository: Repository<MetaOption>,
     private readonly usersService: UsersService,
     private readonly tagsService: TagsService,
+    private readonly paginationProvider: PaginationProvider,
   ) {}
 
-  public async findAll() {
+  public async findAll(userId: string, postQuery: GetPostDto) {
+    // Get all posts
+    const posts = await this.paginationProvider.paginateQuery(
+      {
+        limit: postQuery.limit,
+        page: postQuery.page,
+      },
+      this.postRepository,
+    );
+    return {
+      posts,
+    };
+  }
+
+  public async findAllPosts() {
     return await this.postRepository.find({
       // or add the eager flag on post entity
       relations: {
@@ -52,7 +69,7 @@ export class PostsService {
       return await this.postRepository.save(post);
       // add metaOptions to post
     } catch (error) {
-      return error.message;
+      return error;
     }
   }
 
